@@ -3,90 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witaj na moim GitHubie</title>
+    <title>ROOT // TERMINAL :: [Ulica404]</title>
     <style>
+        /* --- CSS VARIABLES & RESET --- */
         :root {
-            --bg-color: #0d1117;
-            --text-color: #c9d1d9;
-            --accent-color: #58a6ff;
-            --card-bg: #161b22;
+            --bg-color: #050505; /* Prawie czarny */
+            --text-color: #e0e0e0;
+            --accent-color: #00f2fe; /* Neonowy błękit */
+            --accent-glow: rgba(0, 242, 254, 0.5);
+            --card-bg: rgba(15, 15, 15, 0.8);
+            --border-color: #222;
+            --font-main: 'Fira Code', 'Courier New', Courier, monospace; /* Monospace dla klimatu */
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-family: var(--font-main);
             background-color: var(--bg-color);
             color: var(--text-color);
+            height: 100vh;
+            overflow: hidden; /* Canvas tła zajmuje wszystko */
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
 
-        .container {
-            text-align: center;
-            max-width: 600px;
-            padding: 2rem;
+        /* --- BACKGROUND CANVAS (PARTICLES) --- */
+        #bg-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .main-frame {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
             background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid #30363d;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            backdrop-filter: blur(10px); /* Efekt oszronionego szkła */
+            padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInSlide 1s ease-out forwards;
         }
 
-        h1 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
-        .links {
-            margin-top: 2rem;
-        }
-
-        .btn {
-            text-decoration: none;
-            color: var(--bg-color);
-            background-color: var(--accent-color);
-            padding: 10px 20px;
-            border-radius: 6px;
+        /* --- TYPOGRAPHY --- */
+        .glitch-title {
+            font-size: 3rem;
             font-weight: bold;
-            transition: opacity 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--accent-glow);
+            margin-bottom: 1rem;
+            position: relative;
         }
 
-        .btn:hover {
-            opacity: 0.8;
+        /* Efekt pisania na maszynie (JavaScript) */
+        .typewriter {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            min-height: 1.6em;
         }
 
-        .status {
+        .cursor {
             display: inline-block;
-            margin-top: 1rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: #238636;
-            color: white;
-            font-size: 0.8rem;
+            width: 10px;
+            background-color: var(--accent-color);
+            animation: blink 1s infinite;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #aaa;
+            margin-bottom: 3rem;
+        }
+
+        /* --- LINKS & BUTTONS --- */
+        .links-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cyber-btn {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .cyber-btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInSlide {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Mobile adaptation */
+        @media (max-width: 600px) {
+            .glitch-title { font-size: 2rem; }
+            .main-frame { padding: 1.5rem; }
+            .cyber-btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="status">Dostępny do projektów</div>
-        <h1>Witaj na moim profilu!</h1>
-        <p>
-            Jestem pasjonatem technologii i programowania. 
-            Tutaj znajdziesz moje najnowsze eksperymenty, narzędzia i projekty open-source.
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="main-frame">
+        <h1 class="glitch-title">> [Ulica404]</h1>
+        
+        <div class="typewriter">
+            Initialize... <span id="typing-text"></span><span class="cursor">&nbsp;</span>
+        </div>
+
+        <p class="description">
+            Cześć. Eksploruję granice kodu, algorytmów i architektury systemów. 
+            Moja obecność tutaj to zbiór cyfrowych eksperymentów, narzędzi i projektów, 
+            które przesuwają granice mojej wiedzy. Wejdź głębiej.
         </p>
         
-        <div class="links">
-            <a href="https://github.com/TWOJA-NAZWA?tab=repositories" class="btn">Zobacz Repozytoria</a>
+        <div class="links-group">
+            <a href="https://github.com/Ulica404?tab=repositories" class="cyber-btn">Access_Repositories</a>
+            <a href="mailto:mat.streetZ@email.com" class="cyber-btn">Contact_Root</a>
         </div>
     </div>
 
+    <script>
+        /* 1. ANIMACJA CZĄSTECZEK TŁA (Matrix/Space Effect) */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        // Klasa pojedynczej cząsteczki
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x; this.y = y;
+                this.directionX = directionX; this.directionY = directionY;
+                this.size = size; this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                this.x += this.directionX; this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles * 2; i++) {
+                let size = (Math.random() * 2) + 0.5;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.5) - 0.25;
+                let directionY = (Math.random() * 0.5) - 0.25;
+                // Kolor cząsteczek: neonowy błękit z różną przezroczystością
+                let color = `rgba(0, 242, 254, ${Math.random() * 0.5})`; 
+
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        // Łączenie linii
+        function connectParticles() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) +
+                                   ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = `rgba(0, 242, 254, ${opacityValue * 0.2})`;
+                        ctx.lineWidth = 1; ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            particlesArray.forEach(p => p.update());
+            connectParticles();
+        }
+
+        initParticles(); animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = innerWidth; canvas.height = innerHeight;
+            initParticles();
+        });
+
+        /* 2. EFEKT PISANIA NA MASZYNIE */
+        const textElement = document.getElementById('typing-text');
+        const phrases = [
+            "Full-Stack Developer",
+            "Creative Coder",
+            "Open Source Enthusiast",
+            "Building the future..."
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                // Koniec frazy, czekaj i zacznij kasować
+                isDeleting = true;
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                // Skasowano, następna fraza
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                setTimeout(type, 500);
+            } else {
+                // Prędkość pisania/kasowania
+                setTimeout(type, isDeleting ? 50 : 100);
+            }
+        }
+
+        // Start pisania
+        setTimeout(type, 1000);
+
+    </script>
 </body>
 </html>
