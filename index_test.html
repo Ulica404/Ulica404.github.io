@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARASAKA NET // ACCESS_PORTAL :: [TWOJA_NAZWA]</title>
+    <style>
+        /* --- ARASAKA BRANDING VALUES --- */
+        :root {
+            --bg-color: #030303;      /* Surowa czerń */
+            --arasaka-red: #ff0000;  /* Agresywna czerwień */
+            --arasaka-dark: #660000;
+            --text-main: #e0e0e0;     /* Off-white */
+            --text-muted: #666;       /* Ciemnoszary dla sub-tekstu */
+            --font-mono: 'OCR A Extended', 'Monaco', 'Courier New', monospace;
+            --font-cyber: 'Fira Code', 'Segoe UI', sans-serif;
+            --scanline-color: rgba(255, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-cyber);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 1px;
+        }
+
+        /* --- GLOBAL EFFECTS (Scanlines & Noise) --- */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(var(--scanline-color) 50%, rgba(0, 0, 0, 0) 50%);
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @keyframes noise {
+            0% { transform: translate(0,0) }
+            10% { transform: translate(-5%,-5%) }
+            20% { transform: translate(-10%,5%) }
+            30% { transform: translate(5%,-10%) }
+            40% { transform: translate(-5%,15%) }
+            50% { transform: translate(-10%,5%) }
+            60% { transform: translate(15%,0) }
+            70% { transform: translate(0,10%) }
+            80% { transform: translate(-15%,0) }
+            90% { transform: translate(10%,5%) }
+            100% { transform: translate(5%,0) }
+        }
+
+        /* --- ARASAKA LOGO CONTAINER --- */
+        .arasaka-logo {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .logo-symbol {
+            width: 50px;
+            height: 50px;
+            background-color: var(--arasaka-red);
+            /* Prosty, geometryczny kształt brutalistyczny */
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: glitch-flash 4s infinite;
+        }
+
+        .logo-text {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            color: var(--arasaka-red);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* --- MAIN TERMINAL FRAME --- */
+        .terminal-container {
+            position: relative;
+            z-index: 10;
+            width: 85%;
+            max-width: 900px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid var(--arasaka-red);
+            border-radius: 4px;
+            padding: 0;
+            box-shadow: 0 0 30px var(--arasaka-dark);
+            opacity: 0;
+            animation: system-boot 1s ease-out 0.5s forwards;
+        }
+
+        /* Header baru */
+        .terminal-header {
+            background-color: var(--arasaka-dark);
+            color: white;
+            padding: 8px 15px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--arasaka-red);
+        }
+
+        .terminal-content {
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* --- USER ID SECTION --- */
+        .user-id-block {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--text-muted);
+            padding-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--arasaka-red);
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: var(--arasaka-red);
+            animation: glitch-flash 5s infinite;
+        }
+
+        .user-details h1 {
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .user-details p {
+            font-family: var(--font-mono);
+            color: var(--parasaka-red);
+            color: var(--arasaka-red);
+            font-size: 0.9rem;
+        }
+
+        /* --- STATUS / DATA SECTION --- */
+        .status-block {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 3rem;
+        }
+
+        .status-line { display: block; margin-bottom: 5px; }
+        .status-label { color: var(--text-muted); }
+        .status-value { color: var(--arasaka-red); font-weight: bold; }
+        .status-value.ok { color: #00ff00; }
+
+        /* --- BRUTALIST BUTTONS --- */
+        .action-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .arasaka-btn {
+            text-decoration: none;
+            color: var(--arasaka-red);
+            background: transparent;
+            border: 2px solid var(--arasaka-red);
+            padding: 15px 30px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .arasaka-btn::after {
+            content: " 荒坂 ";
+            position: absolute;
+            right: 10px;
+            opacity: 0.1;
+            transition: all 0.2s ease;
+        }
+
+        .arasaka-btn:hover {
+            background-color: var(--arasaka-red);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+        }
+
+        .arasaka-btn:hover::after {
+            opacity: 0.5;
+            color: var(--bg-color);
+        }
+
+        /* --- CORNER DECORATION --- */
+        .corner-tag {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        /* --- JAPANESE BACKGROUND TEXT --- */
+        .bg-kanji {
+            position: fixed;
+            font-family: "serif";
+            color: rgba(255, 0, 0, 0.03);
+            font-size: 40vh;
+            z-index: -1;
+            bottom: -10vh;
+            right: -5vh;
+            pointer-events: none;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes system-boot {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes glitch-flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            92% { opacity: 1; transform: scale(1); }
+            93% { opacity: 0.5; transform: scale(1.02) skewX(-5deg); }
+            94% { opacity: 1; transform: scale(1); }
+            95% { opacity: 0.8; transform: scale(0.98); }
+            96% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+            .terminal-container { width: 95%; }
+            .terminal-content { padding: 1rem; }
+            .user-details h1 { font-size: 1.5rem; }
+            .action-group { grid-template-columns: 1fr; }
+            .arasaka-logo { top: 10px; left: 10px; scale: 0.8; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-kanji">荒<br>坂</div>
+
+    <div class="arasaka-logo">
+        <div class="logo-symbol"></div>
+        <div class="logo-text">ARASAKA</div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span>NET_ACCESS_PORTAL // SEC_LEVEL: ALPHA</span>
+            <span id="system-time"></span>
+        </div>
+
+        <div class="terminal-content">
+            <div class="user-id-block">
+                <div class="user-avatar">?</div>
+                <div class="user-details">
+                    <h1>> [TWOJA_NAZWA]</h1>
+                    <p>Subnet Analyst // Counter-Intel Division</p>
+                </div>
+            </div>
+
+            <div class="status-block">
+                <span class="status-line"><span class="status-label">Network Status: </span><span class="status-value ok">SECURE</span></span>
+                <span class="status-line"><span class="status-label">Current Node: </span><span class="status-value">Night_City_Hub_04</span></span>
+                <span class="status-line"><span class="status-label">Access Token: </span><span class="status-value">Active</span></span>
+                <span class="status-line"><span class="status-label">Active Projects: </span><span class="status-value">[#]ZOBACZ_REPOZYTORIA</span></span>
+                <span class="status-line"><span class="status-label">System Message: </span><span class="status-value" style="animation: glitch-flash 1s infinite;">"Family is everything."</span></span>
+            </div>
+            
+            <div class="action-group">
+                <a href="https://github.com/TWOJA-NAZWA?tab=repositories" class="arasaka-btn">Initialize_Project_Load</a>
+                <a href="mailto:TWOJ_MAIL@email.com" class="arasaka-btn">Secure_Comms_Link</a>
+            </div>
+
+            <div class="corner-tag">Arasaka Corp. // "Securing Your Future"</div>
+        </div>
+    </div>
+
+    <script>
+        // Prosty skrypt na dynamiczny czas systemowy
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toISOString().slice(0, 19).replace('T', ' ');
+            document.getElementById('system-time').textContent = timeString + " // NC_T";
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
