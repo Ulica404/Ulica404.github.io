@@ -1,916 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulica404 // GITHUB DEV PORTAL | AI • ROBOTICS • GAMEDEV</title>
+    <title>COG-NET // AUTH_REQUIRED :: [Ulica404]</title>
     <style>
-        /* --- CSS VARIABLES & CYBERPUNK PALETTE --- */
+        /* --- DESIGN SYSTEM: CYBER-MINIMALISM 2026 --- */
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #15151f;
-            --text-primary: #e0e0ff;
-            --text-secondary: #a0a0c8;
-            --accent-cyan: #00f0ff;
-            --accent-magenta: #ff00ff;
-            --accent-purple: #a020f0;
-            --accent-green: #00ff41;
-            --glow-cyan: rgba(0, 240, 255, 0.3);
-            --glow-magenta: rgba(255, 0, 255, 0.3);
-            --border-color: #2a2a3f;
-            --card-bg: rgba(20, 20, 35, 0.8);
+            --bg-base: #010203;       /* Głęboki, "kosmiczny" czarny */
+            --accent-main: #00f2fe;   /* Neonowy, "lodowy" błękit (twoja aura) */
+            --accent-glow: rgba(0, 242, 254, 0.4);
+            --interface-bg: rgba(5, 10, 20, 0.9); /* "Oszronione" szkło */
+            --border: #0a1525;
+            --text-primary: #fff;
+            --text-secondary: #4a5d73;
+            --font-mono: 'Fira Code', 'Courier New', monospace;
+            --font-cyber: 'Syncopate', 'Segoe UI', sans-serif; /* Futurystyczny, szeroki font */
         }
 
+        /* --- GLOBAL EFFECTS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html { scroll-behavior: smooth; }
-
         body {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            background-color: var(--bg-primary);
+            font-family: var(--font-mono);
+            background-color: var(--bg-base);
             color: var(--text-primary);
-            line-height: 1.6;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* --- ANIMATED BACKGROUND --- */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-        }
-
-        /* --- SCANLINES EFFECT --- */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(0deg, rgba(0, 240, 255, 0.03) 24%, transparent 25%, transparent 26%, rgba(0, 240, 255, 0.03) 27%, rgba(0, 240, 255, 0.03) 74%, transparent 75%, transparent 76%, rgba(0, 240, 255, 0.03) 77%, rgba(0, 240, 255, 0.03));
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 999;
-        }
-
-        /* --- NAVIGATION --- */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            border-bottom: 2px solid var(--accent-cyan);
-            padding: 1.5rem 2rem;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            position: relative;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+        /* Deklaracja HUD (Heads-Up Display) w rogach */
+        .hud-corner {
+            position: absolute;
+            font-family: var(--font-cyber);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
             text-transform: uppercase;
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px var(--glow-cyan);
-            letter-spacing: 3px;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+        .hud-tl { top: 20px; left: 20px; text-shadow: 0 0 5px var(--accent-glow); }
+        .hud-br { bottom: 20px; right: 20px; text-align: right; }
+
+        /* --- BACKGROUND CANVAS (DYSKRETNY NETWORK) --- */
+        #bg-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.6;
         }
 
-        .nav-links {
+        /* --- MAIN CORE UNIT FRAME --- */
+        .core-unit-frame {
+            position: relative;
+            z-index: 10;
+            width: 80%;
+            max-width: 900px;
+            background: var(--interface-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px); /* Efekt "oszronionego szkła" */
+            opacity: 0;
+            animation: core-boot 1.5s ease-out 0.2s forwards;
+            box-shadow: 
+                0 0 10px var(--border),
+                inset 0 0 20px rgba(0, 242, 254, 0.05);
+        }
+
+        /* --- VISUAL CORE (Neural Octagon) --- */
+        .core-visual-container {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .neural-octagon {
+            width: 100px;
+            height: 100px;
+            background: var(--bg-base);
+            border: 2px solid var(--accent-main);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: octagon-pulse 3s infinite;
+        }
+
+        .ai-pulse-center {
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 20px #fff,
+                0 0 40px var(--accent-main);
+            animation: core-light-pulse 1s infinite alternate;
+        }
+
+        /* --- CONTENT SECTION --- */
+        .core-content {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        h1.core-title {
+            font-family: var(--font-cyber);
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .ai-model-tag {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--accent-main);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .ai-model-tag::before {
+            content: "◆ ";
+            animation: blink 0.5s infinite alternate;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        /* --- TECH BUTTONS --- */
+        .actions-block {
             display: flex;
             gap: 2rem;
-            list-style: none;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .nav-links a {
-            color: var(--text-secondary);
+        .ai-btn {
             text-decoration: none;
+            color: #fff;
+            font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            padding: 15px 40px;
+            border-radius: 50px; /* Okrągłe, sterylne */
+            background: transparent;
+            border: 1px solid var(--border);
             position: relative;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
             letter-spacing: 1px;
         }
 
-        .nav-links a::after {
+        .ai-btn::before {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-magenta);
-            transition: width 0.3s;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--accent-main);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
 
-        .nav-links a:hover {
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px var(--glow-cyan);
+        .ai-btn:hover {
+            border-color: var(--accent-main);
+            box-shadow: 0 0 25px var(--accent-glow);
+            transform: translateY(-3px);
+            color: #000;
         }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* --- CONTENT WRAPPER --- */
-        .content {
-            position: relative;
-            z-index: 10;
-            margin-top: 80px;
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            animation: fadeInUp 1.5s ease-out;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 8vw, 5rem);
-            color: var(--accent-cyan);
-            text-shadow: 0 0 20px var(--glow-cyan), 0 0 40px var(--glow-magenta);
-            margin-bottom: 1rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
-
-        .hero h2 {
-            font-size: clamp(1.2rem, 3vw, 2.5rem);
-            color: var(--accent-magenta);
-            margin-bottom: 2rem;
-            text-shadow: 0 0 10px var(--glow-magenta);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.8;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 2px;
-            border: 2px solid;
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s;
-            overflow: hidden;
-            font-family: 'Fira Code', monospace;
-        }
-
-        .btn-primary {
-            color: var(--accent-cyan);
-            border-color: var(--accent-cyan);
-            background: transparent;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-primary:hover {
-            background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 20px var(--glow-cyan), inset 0 0 20px rgba(0, 240, 255, 0.1);
-            color: var(--accent-cyan);
-            left: 100%;
-        }
-
-        .btn-secondary {
-            color: var(--accent-magenta);
-            border-color: var(--accent-magenta);
-            background: transparent;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 0, 255, 0.1);
-            box-shadow: 0 0 20px var(--glow-magenta);
-        }
-
-        /* --- SECTIONS --- */
-        section {
-            padding: 5rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px var(--glow-cyan);
-            margin-bottom: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            padding-bottom: 1rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-magenta), transparent);
-        }
-
-        /* --- ABOUT SECTION --- */
-        #about {
-            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8), rgba(30, 20, 40, 0.4));
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .about-text h3 {
-            color: var(--accent-magenta);
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .about-text p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.8;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .skill-item {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        .skill-item:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px var(--glow-cyan);
-            transform: translateY(-5px);
-        }
-
-        .skill-item h4 {
-            color: var(--accent-green);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-
-        .skill-item p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        /* --- PROJECTS SECTION --- */
-        #projects {
-            background: linear-gradient(135deg, rgba(30, 20, 40, 0.4), rgba(10, 10, 10, 0.8));
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .project-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 2rem;
-            position: relative;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent);
-            transition: left 0.8s;
-            z-index: 1;
-        }
-
-        .project-card:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 20px var(--glow-cyan);
-            transform: translateY(-10px);
-        }
-
-        .project-card:hover::before {
-            left: 100%;
-        }
-
-        .project-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .project-card h3 {
-            color: var(--accent-magenta);
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            position: relative;
-            z-index: 2;
-        }
-
-        .project-card p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .project-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .tag {
-            background: rgba(255, 0, 255, 0.1);
-            border: 1px solid var(--accent-magenta);
-            color: var(--accent-magenta);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
-        .project-links {
-            display: flex;
-            gap: 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .project-link {
-            color: var(--accent-cyan);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--accent-cyan);
-            border-radius: 2px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .project-link:hover {
-            background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 10px var(--glow-cyan);
-        }
-
-        /* --- BLOG/PORTFOLIO SECTION --- */
-        #portfolio {
-            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8), rgba(30, 20, 40, 0.4));
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .portfolio-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .portfolio-item:hover {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 15px var(--accent-purple);
-        }
-
-        .portfolio-date {
-            color: var(--accent-green);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .portfolio-item h4 {
-            color: var(--accent-cyan);
-            margin-bottom: 0.5rem;
-        }
-
-        /* --- CONTACT SECTION --- */
-        #contact {
-            background: linear-gradient(135deg, rgba(30, 20, 40, 0.4), rgba(10, 10, 10, 0.8));
-            text-align: center;
-        }
-
-        .contact-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-text {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .social-link {
-            color: var(--accent-cyan);
-            text-decoration: none;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--accent-cyan);
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .social-link:hover {
-            background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 20px var(--glow-cyan);
-            color: var(--bg-primary);
-            transform: scale(1.05);
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: var(--accent-cyan);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-shadow: 0 0 10px var(--glow-cyan);
+        .ai-btn:hover::before {
+            opacity: 1;
         }
 
         /* --- ANIMATIONS --- */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes core-boot {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes octagon-pulse {
+            0%, 100% { border-color: var(--accent-main); transform: scale(1); }
+            50% { border-color: #fff; transform: scale(1.03); }
         }
 
-        @keyframes glitch {
-            0% { text-shadow: -2px 0 var(--accent-magenta), 2px 0 var(--accent-cyan); }
-            50% { text-shadow: -2px 0 var(--accent-cyan), 2px 0 var(--accent-magenta); }
-            100% { text-shadow: -2px 0 var(--accent-magenta), 2px 0 var(--accent-cyan); }
+        @keyframes core-light-pulse {
+            from { opacity: 0.7; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1.1); }
         }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
+        @keyframes blink { to { opacity: 0; } }
 
-            .nav-links {
-                gap: 1rem;
-                flex-direction: column;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero h2 {
-                font-size: 1.3rem;
-            }
-
-            .cta-buttons {
-                gap: 1rem;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .content {
-                margin-top: 150px;
-            }
+        /* Responsive */
+        @media (max-width: 700px) {
+            .core-unit-frame { width: 95%; padding: 1.5rem; border-radius: 10px; }
+            h1.core-title { font-size: 1.8rem; letter-spacing: 2px; }
+            .ai-btn { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ANIMATED BACKGROUND -->
     <canvas id="bg-canvas"></canvas>
+    
+    <div class="hud-corner hud-tl">SYS://COG-NET // AUTH.REQUIRED</div>
+    <div class="hud-corner hud-br">NODE://NC_LABS_01 // SEC.ACTIVE</div>
 
-    <!-- NAVIGATION -->
-    <nav>
-        <div class="logo">▲ NEXUS</div>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-
-    <!-- MAIN CONTENT -->
-    <div class="content">
-        <!-- HERO SECTION -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>&lt; DEV_Ulica404 /&gt;</h1>
-                <h2>AI • ROBOTICS • GAMEDEV</h2>
-                <p class="subtitle">
-                    Building next-generation systems at the intersection of AI, Robotics, and Interactive Entertainment.<br>
-                    Exploring the frontiers of machine learning, autonomous systems, and game development.
-                </p>
-                <div class="cta-buttons">
-                    <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
-                </div>
+    <div class="core-unit-frame">
+        
+        <div class="core-visual-container">
+            <div class="neural-octagon">
+                <div class="ai-pulse-center"></div>
             </div>
-        </section>
+        </div>
 
-        <!-- ABOUT SECTION -->
-        <section id="about">
-            <h2 class="section-title">// About</h2>
-            <div class="about-grid">
-                <div class="about-text">
-                    <h3>> Full-Stack Developer & AI Enthusiast</h3>
-                    <p>Passionate about creating intelligent systems that push the boundaries of what's possible. Specializing in machine learning implementations, game development pipelines, and robotics control systems.</p>
-                    <p>With expertise across multiple domains, I bridge the gap between theoretical research and practical applications, building systems that are both innovative and performant.</p>
-                </div>
-                <div class="skills-grid">
-                    <div class="skill-item">
-                        <h4>🤖 AI & ML</h4>
-                        <p>Neural Networks, Deep Learning, NLP, Computer Vision, Reinforcement Learning</p>
-                    </div>
-                    <div class="skill-item">
-                        <h4>🎮 GameDev</h4>
-                        <p>Unity, Unreal Engine, Game Physics, Multiplayer Systems, Optimization</p>
-                    </div>
-                    <div class="skill-item">
-                        <h4>⚙️ Robotics</h4>
-                        <p>ROS, Control Systems, Path Planning, Computer Vision Integration</p>
-                    </div>
-                    <div class="skill-item">
-                        <h4>💻 Backend</h4>
-                        <p>Python, C++, Node.js, Docker, Kubernetes, Cloud Architecture</p>
-                    </div>
-                    <div class="skill-item">
-                        <h4>🎨 Frontend</h4>
-                        <p>React, TypeScript, WebGL, Three.js, Real-time Visualization</p>
-                    </div>
-                    <div class="skill-item">
-                        <h4>🔧 Tools</h4>
-                        <p>Git, Jenkins, TensorFlow, PyTorch, AWS, Linux Administration</p>
-                    </div>
-                </div>
+        <div class="core-content">
+            <h1 class="core-title">> Ulica404</h1>
+            <div class="ai-model-tag">Street-Level Neural Engineering</div>
+
+            
+            
+            <div class="actions-block">
+                <a href="https://github.com/Ulica404?tab=repositories" class="ai-btn">Initialize_Core_Load</a>
+                <a href="mailto:mat.streetZ@gmail.com" class="ai-btn">Secure_Comms</a>
             </div>
-        </section>
-
-        <!-- PROJECTS SECTION -->
-        <section id="projects">
-            <h2 class="section-title">// Featured Projects</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-icon">🤖</div>
-                    <h3>Neural Motion Controller</h3>
-                    <p>Deep reinforcement learning system for autonomous robot motion control. Achieved 95% accuracy in pathfinding optimizations.</p>
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">PyTorch</span>
-                        <span class="tag">ROS</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon">🎮</div>
-                    <h3>Procedural World Engine</h3>
-                    <p>Large-scale game world generation using Perlin noise and ML-based content synthesis. Supports real-time streaming and LOD optimization.</p>
-                    <div class="project-tags">
-                        <span class="tag">C++</span>
-                        <span class="tag">Unreal</span>
-                        <span class="tag">CUDA</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon">🧠</div>
-                    <h3>Vision Intelligence System</h3>
-                    <p>Computer vision framework for real-time object detection and semantic segmentation. Integrated with robotics systems for autonomous navigation.</p>
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">OpenCV</span>
-                        <span class="tag">TensorFlow</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon">🔗</div>
-                    <h3>Distributed Game Backend</h3>
-                    <p>Scalable multiplayer backend with real-time sync, matchmaking algorithms, and persistent state management for 100K+ concurrent players.</p>
-                    <div class="project-tags">
-                        <span class="tag">Node.js</span>
-                        <span class="tag">WebSocket</span>
-                        <span class="tag">MongoDB</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon">📊</div>
-                    <h3>Data Analysis Pipeline</h3>
-                    <p>End-to-end ML pipeline for processing sensor data. Features automated feature engineering, model versioning, and A/B testing framework.</p>
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Pandas</span>
-                        <span class="tag">Scikit-learn</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon">⚡</div>
-                    <h3>Real-time Rendering Engine</h3>
-                    <p>High-performance graphics engine with ray-tracing support, particle systems, and advanced material rendering for next-gen graphics.</p>
-                    <div class="project-tags">
-                        <span class="tag">C++</span>
-                        <span class="tag">Vulkan</span>
-                        <span class="tag">GLSL</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com" class="project-link">View Code</a>
-                        <a href="#" class="project-link">Demo</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PORTFOLIO SECTION -->
-        <section id="portfolio">
-            <h2 class="section-title">// Latest Articles & Resources</h2>
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <div class="portfolio-date">2024-01</div>
-                    <h4>Deep Learning for Game AI</h4>
-                    <p>Exploring neural networks in game development and AI decision-making systems.</p>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-date">2023-12</div>
-                    <h4>Robotics Optimization Guide</h4>
-                    <p>Advanced techniques for optimizing robotic control systems and improving efficiency.</p>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-date">2023-11</div>
-                    <h4>Game Engine Architecture</h4>
-                    <p>Best practices in designing scalable and maintainable game engines.</p>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-date">2023-10</div>
-                    <h4>Vision Systems in Robotics</h4>
-                    <p>Implementing computer vision for autonomous navigation and object recognition.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- CONTACT SECTION -->
-        <section id="contact">
-            <h2 class="section-title">// Get In Touch</h2>
-            <div class="contact-content">
-                <p class="contact-text">
-                    Interested in collaborating on AI and robotics projects? Let's connect and build something amazing together.
-                </p>
-                <div class="social-links">
-                    <a href="https://github.com" class="social-link">GitHub</a>
-                    <a href="https://linkedin.com" class="social-link">LinkedIn</a>
-                    <a href="mailto:dev@nexus.com" class="social-link">Email</a>
-                    <a href="https://twitter.com" class="social-link">Twitter</a>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>&copy; 2024 NEXUS | AI • Robotics • GameDev | Built with futuristic vision</p>
-    </footer>
-
     <script>
-        // === PARTICLE BACKGROUND ANIMATION ===
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let particles = [];
+        let particlesArray;
 
         class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.opacity = Math.random() * 0.5 + 0.1;
+            constructor(x, y, size, color, velocityX, velocityY) {
+                this.x = x; this.y = y; this.size = size; this.color = color;
+                this.velocityX = velocityX; this.velocityY = velocityY;
             }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-
             draw() {
-                ctx.fillStyle = `rgba(0, 240, 255, ${this.opacity})`;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color; ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) this.velocityX = -this.velocityX;
+                if (this.y > canvas.height || this.y < 0) this.velocityY = -this.velocityY;
+                this.x += this.velocityX; this.y += this.velocityY;
+                this.draw();
             }
         }
 
         function initParticles() {
-            particles = [];
-            const particleCount = (canvas.width * canvas.height) / 15000;
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 15000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 0.5;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                // Bardziej stonowana, chłodna prędkość
+                let velocityX = (Math.random() * 0.2) - 0.1;
+                let velocityY = (Math.random() * 0.2) - 0.1;
+                // Lodowy niebieski z różną przezroczystością
+                let color = `rgba(0, 210, 255, ${Math.random() * 0.3})`; 
+
+                particlesArray.push(new Particle(x, y, size, color, velocityX, velocityY));
             }
         }
 
-        function drawConnections() {
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a + 1; b < particles.length; b++) {
-                    const dx = particles[a].x - particles[b].x;
-                    const dy = particles[a].y - particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 150) {
-                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 * (1 - distance / 150)})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
-                    }
-                }
-            }
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            particlesArray.forEach(p => p.update());
         }
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            drawConnections();
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
+        initParticles(); animate();
 
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
+            canvas.width = innerWidth; canvas.height = innerHeight; initParticles();
         });
-
-        // === SMOOTH SCROLL BEHAVIOR ===
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-
-        // === PARALLAX EFFECT ON SCROLL ===
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const elements = document.querySelectorAll('.project-card, .skill-item');
-            
-            elements.forEach((el, index) => {
-                const speed = 0.5 + (index * 0.1);
-                el.style.transform = `translateY(${scrolled * speed * 0.3}px)`;
-            });
-        });
-
-        // === AMBIENT LIGHTING EFFECT ===
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            document.documentElement.style.setProperty('--mouse-x', x);
-            document.documentElement.style.setProperty('--mouse-y', y);
-        });
-
     </script>
 </body>
 </html>
